@@ -352,3 +352,28 @@ complete_simulation = function(input_gen_list){
               initial.trans.matrix=initial.trans.matrix, var_simulation=var_simulation,
               net=net))#propensities=net@propensities,propensities_simulations=propensities_simulations, var.matrix=var.matrix))
 }
+
+###############################################################
+#Here, we define each gene.
+
+gen_A = gen(name="A",
+            activate_list = list("B","C"),
+            prob_activation = 0.1,
+            prob_degradation = 0.2); gen_A 
+
+gen_B = gen(name="B",
+            activate_list = list("C"),
+            inhibit_list = list("A"),
+            prob_activation = 0.5,
+            prob_degradation = 0.9); gen_B
+
+gen_C = gen(name="C",
+            prob_activation = 0.3,
+            prob_degradation = 0.5); gen_C
+
+input_gen_list = list(gen_A, gen_B, gen_C)
+
+#Here is generated the fixed states, the states with probabilities
+#and the simulations
+
+prueba=complete_simulation(input_gen_list)
