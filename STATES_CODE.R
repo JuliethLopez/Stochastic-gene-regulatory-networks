@@ -51,7 +51,7 @@ plot_gens = function(input_gen_list){
     }}
   gd=graph.data.frame(d = dinamic,directed = T)
   plot.igraph(gd, edge.curved = T, edge.color=dinamic[,3], vertex.color="grey",
-              main="Genes interaction")
+              main="Genes interaction", margin=0.2)
   legend(x = "topleft",
          legend = c("Activation", "Degradation"),
          pch = 19,
