@@ -9,7 +9,5 @@ In this repository we have put a code created in R program in which in possible 
 ## Authors:
 
 - [Julieth Andrea López Castiblanco](https://github.com/JuliethLopez)
-- [José Arbelo]()
+- [José Arbelo Ramos]()
 - [Olcay Akman]()
-
-
