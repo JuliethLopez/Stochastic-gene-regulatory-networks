@@ -6,8 +6,11 @@ To have an idea of the model we'll expose an overwiew of the paper's models. Mur
 
 In this repository we have put a code created in R program in which in possible to put **n** number genes with their activation or degradions propensities as well as the genes that are activated or degraded by each gene. With the code is possible to find the fixed states, the states taking in mind probabilities to pass from one to another state, and finally the code generates **m** simulations to add the last states a variance of probability changing states. Finally, it's important to remember that the propensities found in Gene Networks are not in fact seen as constant, rather they can be values that can be changed with a certain probability.
                                             
-RStudio: [![Binder](http://mybinder.org/badge_logo.svg)](http://mybinder.org/v2/gh/JuliethLopez/Stochastic-gene-regulatory-networks/main?urlpath=rstudio)
+For open the **APLICATION.ipynb** in Binder you can use this button:
 Binder: [![Binder](http://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/JuliethLopez/Stochastic-gene-regulatory-networks/main?filepath=APLICATION.ipynb)
+
+For open all the repository in RStudio you can use the next button:
+RStudio: [![Binder](http://mybinder.org/badge_logo.svg)](http://mybinder.org/v2/gh/JuliethLopez/Stochastic-gene-regulatory-networks/main?urlpath=rstudio)
 
 ## Authors:
 
