@@ -5,6 +5,7 @@ library(gtools)
 library(markovchain)
 library(data.table)
 library(RColorBrewer)
+library(dplyr)
 
 ###############################################################
 # class gen
@@ -173,7 +174,7 @@ show_table = function(object){
 #Plot netwwork with fixed states
 plot_graph=function(P){
   mc = new("markovchain",transitionMatrix=P,name="States")
-  plot(mc)
+  plot(mc,edge.curved = T)
   title("Network")
 }
 
@@ -294,26 +295,28 @@ plot_graph_simulations= function(initial.trans.matrix,propensities_simulations){
   melt(data.table(initial.trans.matrix, keep.rownames=T),id="rn")
   color=colorRampPalette(c("deepskyblue", "darkgreen"))(nrow(initial.trans.matrix))
   
-  matriss=melt(data.table(initial.trans.matrix, keep.rownames=T),id="rn")
+  matriss_complete=melt(data.table(initial.trans.matrix, keep.rownames=T),id="rn")
   matriss1=melt(data.table(propensities_simulations$var.matrix, keep.rownames=T),id="rn")
-  matriss$var=matriss1$valu
-  summary_var=summary(matriss$var)
-  matriss=matriss[order(matriss$var),]
-  matriss$color=rep(color,rep(8,8))
+  matriss_complete$var=matriss1$valu
+  summary_var=summary(matriss_complete$var)
+  matriss_complete=matriss_complete[order(matriss_complete$var),]
+  matriss_complete$color=rep(color,rep(8,8))
+  matriss_filtered=matriss_complete%>%filter(value!=0)
   
-  gd=graph.data.frame(d = matriss,directed = T)
-  plot.igraph(gd,edge.curved = T,edge.width=matriss$var*20,
-              edge.col=matriss$color,
-              edge.label=matriss$value,main="Simulations network")
+  gd=graph.data.frame(d = matriss_filtered,directed = T)
+  #delete.edges(gd, which(E(gd)$weight==0))
+  plot.igraph(gd,edge.curved = T,edge.width=matriss_filtered$var/(0.3*max(matriss_filtered$var)),
+              edge.col=matriss_filtered$color,
+              edge.label=matriss_filtered$value,main="Simulations network")
   legend(-1.9,1.2,
          legend = paste(names(summary_var[c(1,3,6)]),round(summary_var[c(1,4,6)],2), sep = ":"),
          lty=1,
-         lwd=summary_var[c(1,4,6)]*20,
+         lwd=summary_var[c(1,4,6)]/(0.3*max(matriss_filtered$var)),
          col=color[c(1,4,8)],
          bty = "n")
 }
 
-complete_simulation = function(input_gen_list){
+complete_simulation = function(input_gen_list,num_simulations=100){
   #We plot the genes dynamic
   plot_gens(input_gen_list)
   
@@ -326,29 +329,29 @@ complete_simulation = function(input_gen_list){
   net=fixed_states(net)
   
   #matrix states
-  P=show_table(net) #return
+  P=show_table(net)
   
   #plot states
   plot_dinamic=plot_graph(P)
   
   #propensities matrix
   net=obtain_propensities(net)
-  initial_propensities=net@propensities #return
+  initial_propensities=net@propensities
   
   #transition matrix
   net=transition_matrix(net)
-  initial.trans.matrix = net@transition_matrix #return
+  initial.trans.matrix = net@transition_matrix
   plot_graph(initial.trans.matrix)
   
   #Simulations
-  simulations = make_simulations(net,n=100)
+  simulations = make_simulations(net,n=num_simulations)
   propensities_simulations = propensities_simulation(net,simulations)
-  var_simulation = propensities_simulations$var.matrix #return
+  var_simulation = propensities_simulations$var.matrix
   
   #graph with the variance of the simulations
-  plot_graph_simulations(initial.trans.matrix,propensities_simulations) #return
+  plot_graph_simulations(initial.trans.matrix,propensities_simulations)
   
   return(list(genes=input_gen_list, matrix_states=P, initial_propensities=initial_propensities,
               initial.trans.matrix=initial.trans.matrix, var_simulation=var_simulation,
-              net=net))#propensities=net@propensities,propensities_simulations=propensities_simulations, var.matrix=var.matrix))
+              net=net))
 }
