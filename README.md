@@ -15,7 +15,7 @@ RStudio: [![Binder](http://mybinder.org/badge_logo.svg)](http://mybinder.org/v2/
 ## Authors:
 
 - [Julieth Andrea López Castiblanco](https://github.com/JuliethLopez)
-- [José Arbelo Ramos]()
+- [José Arbelo Ramos](jose.arbelo2@upr.edu)
 - [Olcay Akman]()
 
 ### Collaborators:
