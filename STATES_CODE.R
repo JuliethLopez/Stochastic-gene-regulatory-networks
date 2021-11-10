@@ -281,7 +281,7 @@ propensities_simulation= function(net,simulations){
     net=obtain_propensities(net)
     #transition matrix
     net=transition_matrix(net)
-    propensities_simulations[,i] <- as.vector(net@transition_matrix) #The values of the transition matrix are stored in the columns, each column contain the values of a matrix, are simulationsd by columns
+    propensities_simulations[,i] <- as.vector(net@transition_matrix) #The values of the transition matrix of the simulations are stored in columns, each column contain the values of a matrix. For make the matrices, R takes a vector (in this case a column) and by default orders the values by columns.
   }
   var.simulations <- apply(propensities_simulations, 1, var)
   var.matrix <- matrix(var.simulations,nrow=nrow(net@transition_matrix),ncol=ncol(net@transition_matrix)) #the matrix takes a vector and order the values by columns
@@ -291,7 +291,7 @@ propensities_simulation= function(net,simulations){
 }
 
 #plot the simulation
-plot_graph_simulations= function(initial.trans.matrix,propensities_simulations){
+plot_graph_simulations= function(initial.trans.matrix,propensities_simulations,ceros=FALSE){
   melt(data.table(initial.trans.matrix, keep.rownames=T),id="rn")
   color=colorRampPalette(c("deepskyblue", "darkgreen"))(nrow(initial.trans.matrix))
   
@@ -301,12 +301,15 @@ plot_graph_simulations= function(initial.trans.matrix,propensities_simulations){
   summary_var=summary(matriss_complete$var)
   matriss_complete=matriss_complete[order(matriss_complete$var),]
   matriss_complete$color=rep(color,rep(8,8))
-  matriss_filtered=matriss_complete%>%filter(value!=0)
+  if (ceros==TRUE){
+    matriss_filtered=matriss_complete
+  } else {
+    matriss_filtered=matriss_complete%>%filter(value!=0)
+  }
   
   gd=graph.data.frame(d = matriss_filtered,directed = T)
-  #delete.edges(gd, which(E(gd)$weight==0))
   plot.igraph(gd,edge.curved = T,edge.width=matriss_filtered$var/(0.3*max(matriss_filtered$var)),
-              edge.col=matriss_filtered$color,
+              edge.col=matriss_filtered$color, margin=0.2,
               edge.label=matriss_filtered$value,main="Simulations network")
   legend(-1.9,1.2,
          legend = paste(names(summary_var[c(1,3,6)]),round(summary_var[c(1,4,6)],2), sep = ":"),
@@ -316,7 +319,7 @@ plot_graph_simulations= function(initial.trans.matrix,propensities_simulations){
          bty = "n")
 }
 
-complete_simulation = function(input_gen_list,num_simulations=100){
+complete_simulation = function(input_gen_list,num_simulations=100,ceros=FALSE){
   #We plot the genes dynamic
   plot_gens(input_gen_list)
   
@@ -349,9 +352,9 @@ complete_simulation = function(input_gen_list,num_simulations=100){
   var_simulation = propensities_simulations$var.matrix
   
   #graph with the variance of the simulations
-  plot_graph_simulations(initial.trans.matrix,propensities_simulations)
+  plot_graph_simulations(initial.trans.matrix,propensities_simulations,ceros)
   
   return(list(genes=input_gen_list, matrix_states=P, initial_propensities=initial_propensities,
               initial.trans.matrix=initial.trans.matrix, var_simulation=var_simulation,
-              net=net))
+              net=net, propensities_simulations=propensities_simulations))
 }
